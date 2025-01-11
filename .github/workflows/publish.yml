@@ -32,11 +32,27 @@ jobs:
           cp -r temp_blog/. .
           rm -rf temp_blog
           rm -rf temp_md
-      - name: Deploy Vercel
-        uses: amondnet/vercel-action@v20
-        with:
-          # TODO: Update Github Secrets with values
-          vercel-token: ${{ secrets.VERCEL_TOKEN }} # Required
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }} # Required
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }} # Required
-          vercel-args: "--prod" #Optional
+      # - name: Deploy Vercel
+      #   uses: amondnet/vercel-action@v20
+      #   with:
+      #     # TODO: Update Github Secrets with values
+      #     vercel-token: ${{ secrets.VERCEL_TOKEN }} # Required
+      #     vercel-org-id: ${{ secrets.VERCEL_ORG_ID }} # Required
+      #     vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }} # Required
+      #     vercel-args: "--prod" #Optional
+      - name: Deploy to Cloudflare Pages
+        run: |
+          # Replace with your Cloudflare API token
+          CF_API_TOKEN=${{ secrets.CF_API_TOKEN }}
+          # Replace with your Cloudflare account email
+          CF_ACCOUNT_EMAIL=${{ secrets.CF_ACCOUNT_EMAIL }}
+          # Replace with your Cloudflare Pages domain name
+          CF_PAGES_DOMAIN=${{ secrets.CF_PAGES_DOMAIN }}
+          curl -X POST https://api.cloudflare.com/client/v4/accounts/$CF_ACCOUNT_EMAIL/pages/domains/$CF_PAGES_DOMAIN/publish \
+            -H "Authorization: Bearer $CF_API_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d '{}'
+        env:
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          CF_ACCOUNT_EMAIL: ${{ secrets.CF_ACCOUNT_EMAIL }}
+          CF_PAGES_DOMAIN: ${{ secrets.CF_PAGES_DOMAIN }}
